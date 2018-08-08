@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navAccount"
+        android:icon="@drawable/myaccount"
+        android:title="@string/my_account">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/acChangePassword"
+                    android:title="@string/change_password" />
+                <item
+                    android:id="@+id/acDeleteAccount"
+                    android:title="@string/delete_account" />
+                <item
+                    android:id="@+id/acLogout"
+                    android:title="@string/logout" />
+            </group>
+        </menu>
+    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navTrash"
+            android:icon="@drawable/bin"
+            android:title="@string/bin" />
+        <item
+            android:id="@+id/navSettings"
+            android:icon="@drawable/setting"
+            android:title="@string/settings" />
+        <item
+            android:id="@+id/navAbout"
+            android:icon="@drawable/help"
+            android:title="@string/help" />
+    </group>
+</menu>

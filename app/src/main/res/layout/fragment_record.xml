@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.record">
+
+    <LinearLayout
+        android:id="@+id/llMusicPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvTitleMusic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="cursive"
+            android:gravity="center"
+            android:hint="Title"
+            android:padding="10dp"
+            android:textSize="22sp"
+            tools:targetApi="jelly_bean" />
+            <ImageButton
+                android:id="@+id/btPlay"
+                android:layout_width="70dp"
+                android:layout_gravity="center"
+                android:layout_height="70dp"
+                android:background="@drawable/round_button"
+                android:src="@drawable/ic_action_music_play" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llRecording"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/status"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+            <ImageButton
+                android:id="@+id/btnRecord"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                android:src="@drawable/ic_action_mic" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/musicProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="40dp"
+        android:visibility="gone" />
+</FrameLayout>

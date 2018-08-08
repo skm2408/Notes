@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorAccent">#8BC34A</color>
+    <color name="notesColor">#a67c00</color>
+    <color name="cameraColor">#005b96</color>
+    <color name="todoColor">#40e0d0</color>
+    <color name="recordingColor">#f7f7f7</color>
+    <color name="todosColor">#747474</color>
+</resources>
