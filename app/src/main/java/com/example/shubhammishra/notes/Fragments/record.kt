@@ -155,6 +155,7 @@ class record : Fragment() {
     private fun uploadAudio() {
         progressDialog = ProgressDialog(view1.context)
         progressDialog.setMessage("Saving Audio..")
+        progressDialog.setCancelable(false)
         progressDialog.show()
         val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
         val storageReference = FirebaseStorage.getInstance().reference.child(currentUser).child(pathSave)

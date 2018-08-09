@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:clipToPadding="false"
             android:layout_height="match_parent"
+            android:layout_marginBottom="52dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             >
             <android.support.design.widget.CoordinatorLayout
@@ -165,8 +166,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:src="@drawable/ic_action_plus"
-            app:elevation="10dp"
-            android:layout_marginRight="7dp"
+            app:elevation="6dp"
+            android:layout_marginRight="18dp"
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom|end"
             app:pressedTranslationZ="12dp"

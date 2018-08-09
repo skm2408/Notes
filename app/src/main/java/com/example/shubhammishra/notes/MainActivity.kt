@@ -30,11 +30,6 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.example.shubhammishra.notes.Adapters.ViewPagerAdapter
 import com.example.shubhammishra.notes.Classes.Snaps
 import com.example.shubhammishra.notes.Classes.UserInfo
 import com.example.shubhammishra.notes.Fragments.*
