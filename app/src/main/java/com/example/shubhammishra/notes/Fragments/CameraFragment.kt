@@ -17,9 +17,8 @@ import kotlinx.android.synthetic.main.list_view_camera.view.*
 
 class CameraFragment: android.support.v4.app.Fragment() {
     lateinit var view1: View
-    lateinit var listSnaps:ArrayList<Snaps>
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        listSnaps= ArrayList()
+        var listSnaps=ArrayList<Snaps>()
         val cameraAdapter=SnapsAdapter(listSnaps)
         view1.mainViewCamera.layoutManager=StaggeredGridLayoutManager(1,LinearLayoutManager.VERTICAL)
         view1.mainViewCamera.adapter=cameraAdapter

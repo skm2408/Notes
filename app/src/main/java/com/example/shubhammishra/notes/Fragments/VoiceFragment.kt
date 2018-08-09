@@ -18,16 +18,14 @@ import kotlinx.android.synthetic.main.list_view_voice.view.*
 
 class VoiceFragment : android.support.v4.app.Fragment() {
     lateinit var view1: View
-    lateinit var listAudio:ArrayList<Recording>
-    lateinit var audioAdapter:AudioAdapter
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view1 = inflater!!.inflate(R.layout.list_view_voice, null)
         return view1
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        listAudio= ArrayList()
-        audioAdapter=AudioAdapter(listAudio)
+        var listAudio=ArrayList<Recording>()
+        var audioAdapter=AudioAdapter(listAudio)
         val uid= FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference=FirebaseDatabase.getInstance().reference.child(uid).child("Recordings")
         view1.mainViewVoice.layoutManager=LinearLayoutManager(view1.context)

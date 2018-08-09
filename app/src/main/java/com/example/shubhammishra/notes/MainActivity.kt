@@ -14,6 +14,7 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
 import android.support.v4.app.ActivityCompat
@@ -153,7 +154,6 @@ class MainActivity : AppCompatActivity() {
         mToggle.syncState()
         setSupportActionBar(toolBar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeButtonEnabled(true)
         fabOpen = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fab_open)
         fabClose = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fab_close)
         rotateClockwise = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_clockwise)
@@ -268,19 +268,27 @@ class MainActivity : AppCompatActivity() {
             shadowView.visibility=View.GONE
             checkShadow=false
         }
-
-        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter.addFragment(NoteFragment(), "Notes")
-        viewPagerAdapter.addFragment(CameraFragment(), "Snaps")
-        viewPagerAdapter.addFragment(TodoFragment(), "Todos")
-        viewPagerAdapter.addFragment(VoiceFragment(), "Recordings")
-        mainViewPager.adapter = viewPagerAdapter
-        maintabLayout.setupWithViewPager(mainViewPager)
-        maintabLayout.getTabAt(0)!!.setIcon(R.drawable.notes)
-        maintabLayout.getTabAt(1)!!.setIcon(R.drawable.gallery)
-        maintabLayout.getTabAt(2)!!.setIcon(R.drawable.todos)
-        maintabLayout.getTabAt(3)!!.setIcon(R.drawable.voice)
-
+         bottomNavMenu.setOnNavigationItemSelectedListener(object:BottomNavigationView.OnNavigationItemSelectedListener {
+             override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                 if(item.itemId.equals(R.id.bottomNotes))
+                 {
+                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
+                 }
+                 else if(item.itemId.equals(R.id.bottomSnaps))
+                 {
+                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,CameraFragment()).commit()
+                 }
+                 else if(item.itemId.equals(R.id.bottomTodos))
+                 {
+                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,TodoFragment()).commit()
+                 }
+                 else
+                 {
+                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,VoiceFragment()).commit()
+                 }
+                 return true
+             }
+         })
     }
 
     private fun startToSave() {
@@ -289,6 +297,7 @@ class MainActivity : AppCompatActivity() {
         if (!title.isEmpty() && !desc.isEmpty()) {
             val dialog = AlertDialog.Builder(this@MainActivity).create()
             dialog.setMessage("Saving....")
+            dialog.setCancelable(false)
             dialog.show()
             val currentUser = auth.currentUser!!.uid
             val filepath = fStorage.child(currentUser).child(imageUri.lastPathSegment)
@@ -299,7 +308,7 @@ class MainActivity : AppCompatActivity() {
                         override fun onSuccess(p0: Uri?) {
                             downloadUrl = p0!!
                             val childData = fDatabase.child(currentUser).child("Snaps").push()
-                            childData.setValue(Snaps(title, desc, downloadUrl.toString()))
+                            childData.setValue(Snaps(System.currentTimeMillis().toString(),title, desc, downloadUrl.toString()))
                             dialog.dismiss()
                             Toast.makeText(this@MainActivity, "Saved Successfully", Toast.LENGTH_SHORT).show()
                         }

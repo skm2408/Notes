@@ -11,34 +11,35 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBar"
+            android:elevation="3dp"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:fitsSystemWindows="true">
-
             <include layout="@layout/layout_toolbar" />
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/maintabLayout"
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            android:elevation="3dp"
-            app:tabTextColor="@android:color/white"
-            app:tabSelectedTextColor="@color/colorPrimaryDark"
+            android:clipToPadding="false"
+            android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+            >
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/mainActivityCoordinator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </android.support.v4.widget.NestedScrollView>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/mainViewPager"
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottomNavMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="230dp" />
-
+            android:layout_gravity="bottom"
+            android:background="?android:attr/windowBackground"
+            app:menu="@menu/bottom_nav_menu" />
         <LinearLayout
             android:id="@+id/llTodo"
             android:layout_width="wrap_content"
@@ -150,25 +151,27 @@
                 app:pressedTranslationZ="12dp" />
         </LinearLayout>
 
+        <View
+            android:id="@+id/shadowView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#F2FFFFFF"
+            android:elevation="4dp"
+            android:visibility="gone" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btnFloatingAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|bottom"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
             android:clickable="true"
             android:src="@drawable/ic_action_plus"
             app:elevation="10dp"
+            android:layout_marginRight="7dp"
+            app:layout_anchor="@id/appBar"
+            app:layout_anchorGravity="bottom|end"
             app:pressedTranslationZ="12dp"
             app:rippleColor="@color/colorPrimaryDark" />
-        <View
-            android:id="@+id/shadowView"
-            android:elevation="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#F2FFFFFF"
-            android:visibility="gone"/>
+
     </android.support.design.widget.CoordinatorLayout>
 
     <com.rom4ek.arcnavigationview.ArcNavigationView

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottomNotes"
+        android:icon="@drawable/notes"
+        android:title="Notes"
+        android:orderInCategory="1" />
+    <item
+        android:id="@+id/bottomSnaps"
+        android:title="Snaps"
+        android:icon="@drawable/bottom_snaps"
+        android:orderInCategory="2" />
+    <item
+        android:id="@+id/bottomTodos"
+        android:title="Todos"
+        android:icon="@drawable/bottom_check"
+        android:orderInCategory="3" />
+    <item
+        android:id="@+id/bottomVoice"
+        android:title="Recordings"
+        android:icon="@drawable/bottom_record"
+        android:orderInCategory="4" />
+</menu>
