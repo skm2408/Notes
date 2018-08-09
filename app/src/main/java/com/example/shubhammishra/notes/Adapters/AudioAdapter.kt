@@ -133,6 +133,7 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
             progressDialog= ProgressDialog(context)
             progressDialog.create()
             progressDialog.setMessage("Preparing Audio to Share")
+            progressDialog.setCancelable(false)
             progressDialog.show()
             super.onPreExecute()
         }

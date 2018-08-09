@@ -85,7 +85,7 @@ class SnapsAdapter(var snapList: ArrayList<Snaps>) : RecyclerView.Adapter<SnapsA
         alertDialog.setCancelable(false)
         mView.alertTitle.setText(snaps.title, TextView.BufferType.EDITABLE)
         mView.alertMessage.setText(snaps.description, TextView.BufferType.EDITABLE)
-        Picasso.get().load(snaps.imgUrl).placeholder(R.drawable.add_image).into(mView.alertImage)
+        Picasso.get().load(snaps.imgUrl).placeholder(R.drawable.load_image).into(mView.alertImage)
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save",object:DialogInterface.OnClickListener{
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 val title=mView.alertTitle.text.toString()

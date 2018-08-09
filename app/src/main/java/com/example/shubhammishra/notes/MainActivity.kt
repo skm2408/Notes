@@ -48,7 +48,6 @@ import kotlinx.android.synthetic.main.navbar_profile.*
 import kotlinx.android.synthetic.main.navbar_profile.view.*
 
 class MainActivity : AppCompatActivity() {
-    var isOpen = false
     var user:UserInfo?=null
     lateinit var fStorage: StorageReference
     lateinit var fDatabase: DatabaseReference
@@ -56,10 +55,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var imageUri: Uri
     lateinit var signUpImageUri: Uri
     val Gallery_Request = 1
-    lateinit var fabOpen: Animation
-    lateinit var fabClose: Animation
-    lateinit var rotateClockwise: Animation
-    lateinit var rotateAntiClock: Animation
     @SuppressLint("SetTextI18n")
     lateinit var mToggle: ActionBarDrawerToggle
     lateinit var auth: FirebaseAuth
@@ -139,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         DoVerification()
+        supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
         val readPermission = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
         val writePermission = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (readPermission == PackageManager.PERMISSION_DENIED || writePermission == PackageManager.PERMISSION_DENIED) {
@@ -149,36 +145,16 @@ class MainActivity : AppCompatActivity() {
         mToggle.syncState()
         setSupportActionBar(toolBar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        fabOpen = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fab_open)
-        fabClose = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fab_close)
-        rotateClockwise = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_clockwise)
-        rotateAntiClock = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_anticlockwise)
         Glide.with(this@MainActivity).load(R.drawable.home).thumbnail(Glide.with(this).load(R.drawable.home)).into(toolBarImage)
         auth = FirebaseAuth.getInstance()
 
         fStorage = FirebaseStorage.getInstance().reference
 
         fDatabase = FirebaseDatabase.getInstance().reference
-        var checkShadow=false
-        btnFloatingAction.setOnClickListener({
-            if(checkShadow)
-            {
-                shadowView.visibility=View.GONE
-                checkShadow=false
-            }else
-            {
-                shadowView.visibility=View.VISIBLE
-                checkShadow=true
-            }
-            animationOpen(isOpen)
-        })
         btnFloatingTodos.setOnClickListener({
             val intent = Intent(this, NewIntent::class.java)
             intent.putExtra("Pressed", "Todos")
             startActivity(intent)
-            animationOpen(isOpen)
-            shadowView.visibility=View.GONE
-            checkShadow=false
         })
         btnFloatingCamera.setOnClickListener {
             val alertDialog = AlertDialog.Builder(this@MainActivity).create()
@@ -201,9 +177,6 @@ class MainActivity : AppCompatActivity() {
                 }
             })
             alertDialog.show()
-            animationOpen(isOpen)
-            shadowView.visibility=View.GONE
-            checkShadow=false
         }
 
         val nameRef = fDatabase.child("Users").child(auth.currentUser!!.uid)
@@ -251,17 +224,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, NewIntent::class.java)
             intent.putExtra("Pressed", "Recording")
             startActivity(intent)
-            animationOpen(isOpen)
-            shadowView.visibility=View.GONE
-            checkShadow=false
         }
         btnFloatingNotes.setOnClickListener {
             val intent = Intent(this, NewIntent::class.java)
             intent.putExtra("Pressed", "Notes")
             startActivity(intent)
-            animationOpen(isOpen)
-            shadowView.visibility=View.GONE
-            checkShadow=false
         }
          bottomNavMenu.setOnNavigationItemSelectedListener(object:BottomNavigationView.OnNavigationItemSelectedListener {
              override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -339,33 +306,6 @@ class MainActivity : AppCompatActivity() {
         if (mToggle.onOptionsItemSelected(item)) {
             return true
         }
-
         return super.onOptionsItemSelected(item)
-    }
-
-    fun animationOpen(open: Boolean) {
-        if (open) {
-            llNotes.startAnimation(fabClose)
-            llCamera.startAnimation(fabClose)
-            llRecording.startAnimation(fabClose)
-            llTodo.startAnimation(fabClose)
-            btnFloatingAction.startAnimation(rotateAntiClock)
-            btnFloatingCamera.isClickable = false
-            btnFloatingNotes.isClickable = false
-            btnFloatingRecording.isClickable = false
-            btnFloatingTodos.isClickable = false
-            isOpen = false
-        } else {
-            llNotes.startAnimation(fabOpen)
-            llCamera.startAnimation(fabOpen)
-            llRecording.startAnimation(fabOpen)
-            llTodo.startAnimation(fabOpen)
-            btnFloatingAction.startAnimation(rotateClockwise)
-            btnFloatingCamera.isClickable = true
-            btnFloatingNotes.isClickable = true
-            btnFloatingRecording.isClickable = true
-            btnFloatingTodos.isClickable = true
-            isOpen = true
-        }
     }
 }
