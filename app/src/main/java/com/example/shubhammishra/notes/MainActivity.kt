@@ -135,6 +135,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         DoVerification()
         supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
+        toolBarImage.setImageResource(R.drawable.back_home_notes)
+        toolBarText.text="Notes"
         val readPermission = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
         val writePermission = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (readPermission == PackageManager.PERMISSION_DENIED || writePermission == PackageManager.PERMISSION_DENIED) {
@@ -230,22 +232,30 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("Pressed", "Notes")
             startActivity(intent)
         }
-         bottomNavMenu.setOnNavigationItemSelectedListener(object:BottomNavigationView.OnNavigationItemSelectedListener {
+        bottomNavMenu.setOnNavigationItemSelectedListener(object:BottomNavigationView.OnNavigationItemSelectedListener {
              override fun onNavigationItemSelected(item: MenuItem): Boolean {
                  if(item.itemId.equals(R.id.bottomNotes))
                  {
+                     toolBarImage.setImageResource(R.drawable.back_home_notes)
+                     toolBarText.text="Notes"
                      supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
                  }
                  else if(item.itemId.equals(R.id.bottomSnaps))
                  {
+                     toolBarImage.setImageResource(R.drawable.back_home_camera)
+                     toolBarText.text="Snaps"
                      supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,CameraFragment()).commit()
                  }
                  else if(item.itemId.equals(R.id.bottomTodos))
                  {
+                     toolBarImage.setImageResource(R.drawable.back_home_todos)
+                     toolBarText.text="Todo List"
                      supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,TodoFragment()).commit()
                  }
                  else
                  {
+                     toolBarImage.setImageResource(R.drawable.back_home_voice)
+                     toolBarText.text="Recordings"
                      supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,VoiceFragment()).commit()
                  }
                  return true
