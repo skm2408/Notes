@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_margin="5dp"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.Todos">
-
     <EditText
         android:id="@+id/todoEditText"
-        android:layout_width="320dp"
+        android:layout_width="258dp"
         android:layout_height="50dp"
         android:hint="Todo Item" />
-                <ImageButton
-                    android:layout_gravity="right"
-                    android:id="@+id/todoAddButton"
-                    android:src="@drawable/ic_action_plus"
-                    android:scaleType="centerCrop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/todoRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+    <ImageButton
+        android:id="@+id/btnSave"
+        android:src="@drawable/ic_action_save_notes"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageButton
+        android:id="@+id/todoAddButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="60dp"
+        android:layout_gravity="right"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_action_plus" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/todoRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </android.support.design.widget.CoordinatorLayout>

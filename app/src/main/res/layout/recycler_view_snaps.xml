@@ -41,7 +41,7 @@
             android:background="#2d2d2d"
             android:scaleType="centerCrop"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/home" />
+            />
 
         <TextView
             android:id="@+id/snapTitle"

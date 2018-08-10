@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.shubhammishra.notes.Classes.GetTodo
 import com.example.shubhammishra.notes.R
-import com.example.shubhammishra.notes.Tables.TodoTable
 import kotlinx.android.synthetic.main.list_view_todo.view.*
 
-class TodoAdapter(var todoArray: ArrayList<GetTodo>, val updatePosition: (task: GetTodo) -> Unit, val deletePosition: (task: GetTodo) -> Unit) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
+class TodoAdapter(var todoArray: ArrayList<GetTodo>) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
@@ -25,14 +25,13 @@ class TodoAdapter(var todoArray: ArrayList<GetTodo>, val updatePosition: (task: 
         holder.itemView.todoText.text = todoArray[position].text
         holder.itemView.todoCheckBox.setOnCheckedChangeListener({ _, isChecked ->
             todoArray[position].checked = isChecked
-            updatePosition(todoArray[position])
         })
         holder.itemView.setOnClickListener({
             todoArray[position].checked = !(holder.itemView.todoCheckBox.isChecked == true)
-            updatePosition(todoArray[position])
         })
         holder.itemView.btnCross.setOnClickListener({
-            deletePosition(todoArray[position])
+            todoArray.removeAt(position)
+            notifyDataSetChanged()
         })
     }
 

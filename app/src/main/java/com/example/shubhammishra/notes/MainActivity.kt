@@ -9,14 +9,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -25,11 +22,8 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.example.shubhammishra.notes.Classes.Snaps
 import com.example.shubhammishra.notes.Classes.UserInfo
 import com.example.shubhammishra.notes.Fragments.*
@@ -44,7 +38,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.alert_signup.view.*
 import kotlinx.android.synthetic.main.camera_view.view.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
-import kotlinx.android.synthetic.main.navbar_profile.*
 import kotlinx.android.synthetic.main.navbar_profile.view.*
 
 class MainActivity : AppCompatActivity() {
@@ -147,7 +140,6 @@ class MainActivity : AppCompatActivity() {
         mToggle.syncState()
         setSupportActionBar(toolBar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        Glide.with(this@MainActivity).load(R.drawable.home).thumbnail(Glide.with(this).load(R.drawable.home)).into(toolBarImage)
         auth = FirebaseAuth.getInstance()
 
         fStorage = FirebaseStorage.getInstance().reference
@@ -308,7 +300,12 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        } else
+        }
+        else if(btnFloatingAction.isOpened)
+        {
+            btnFloatingAction.close(true)
+        }
+        else
             super.onBackPressed()
     }
 
