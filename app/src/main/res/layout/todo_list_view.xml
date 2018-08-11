@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_margin="20dp"
     android:layout_height="wrap_content">
     <CheckBox
         android:id="@+id/todoCheck"
@@ -9,10 +8,12 @@
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/todoTask"
-        android:textSize="20sp"
+        android:textSize="12sp"
+        android:gravity="start|center"
+        android:layout_gravity="center"
         android:fontFamily="serif"
         android:layout_marginLeft="10dp"
         android:hint="Task"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="30dp" />
 </LinearLayout>

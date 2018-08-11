@@ -21,6 +21,7 @@ class TodoViewAdapter(var listTodo:ArrayList<GetTodo>): RecyclerView.Adapter<Tod
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.itemView.todoCheck.isChecked=listTodo[position].checked
         holder.itemView.todoTask.text=listTodo[position].text
+        holder.itemView.todoCheck.isClickable=false
     }
 
     inner class TodoViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {

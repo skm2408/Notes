@@ -30,6 +30,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.camera_view.view.*
 import kotlinx.android.synthetic.main.recycler_view_snaps.view.*
+import kotlinx.android.synthetic.main.zoomable_imageview.view.*
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -50,8 +51,21 @@ class SnapsAdapter(var snapList: ArrayList<Snaps>) : RecyclerView.Adapter<SnapsA
     override fun onBindViewHolder(holder: SnapViewHolder, position: Int) {
         Glide.with(holder.itemView).load(snapList[position].imgUrl).into(holder.itemView.snapImage)
         holder.itemView.snapTitle.text = snapList[position].title
+        holder.itemView.snapImage.setOnClickListener {
+            val alertDialog=AlertDialog.Builder(holder.itemView.context).create()
+            val lf=holder.itemView.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val mView=lf.inflate(R.layout.zoomable_imageview,null)
+            Picasso.get().load(snapList[position].imgUrl).placeholder(R.drawable.load_image).into(mView.zoomable_view)
+            alertDialog.setView(mView)
+            alertDialog.setCancelable(false)
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Exit",object:DialogInterface.OnClickListener{
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    alertDialog.dismiss()
+                }
+            })
+            alertDialog.show()
+        }
         holder.itemView.snapText.text = snapList[position].description
-        holder.itemView.snapToolbar.toolBarTitle.text = snapList[position].title
         holder.itemView.toolBarMenu.setOnClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView.toolBarMenu)
             popupMenu.inflate(R.menu.adapter_menu)

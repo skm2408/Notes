@@ -2,6 +2,7 @@ package com.example.shubhammishra.notes.Fragments
 
 import android.app.Fragment
 import android.os.Bundle
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,7 @@ class VoiceFragment : android.support.v4.app.Fragment() {
         var audioAdapter=AudioAdapter(listAudio)
         val uid= FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference=FirebaseDatabase.getInstance().reference.child(uid).child("Recordings")
-        view1.mainViewVoice.layoutManager=LinearLayoutManager(view1.context)
+        view1.mainViewVoice.layoutManager=GridLayoutManager(view1.context,2)
         view1.mainViewVoice.adapter=audioAdapter
         databaseReference.addChildEventListener(object:ChildEventListener{
             override fun onCancelled(p0: DatabaseError) {

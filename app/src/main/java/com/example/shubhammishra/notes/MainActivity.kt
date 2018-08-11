@@ -258,7 +258,9 @@ class MainActivity : AppCompatActivity() {
     private fun startToSave() {
         val title = mView.alertTitle.text.toString().trim()
         val desc = mView.alertMessage.text.toString().trim()
-        if (!title.isEmpty() && !desc.isEmpty()) {
+        val initialDraw=(resources.getDrawable(R.drawable.add_image) as BitmapDrawable).bitmap
+        val finalDraw=(mView.alertImage.drawable as BitmapDrawable).bitmap
+        if (!title.isEmpty() && !desc.isEmpty()&&(!initialDraw.sameAs(finalDraw))) {
             val dialog = AlertDialog.Builder(this@MainActivity).create()
             dialog.setMessage("Saving....")
             dialog.setCancelable(false)

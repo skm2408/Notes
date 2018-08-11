@@ -26,10 +26,10 @@ class TodoListAdapter(var todoList:ArrayList<GetTodoList>): RecyclerView.Adapter
         val adapter=TodoViewAdapter(todoList[position].todoArray)
        holder.itemView.todoListRecyclerView.layoutManager=LinearLayoutManager(view1.context)
         holder.itemView.todoListRecyclerView.adapter=adapter
-        holder.itemView.todoListRecyclerView.setOnTouchListener { v, event ->
-            v.parent.requestDisallowInterceptTouchEvent(true)
-            false
-        }
+//        holder.itemView.todoListRecyclerView.setOnTouchListener { v, event ->
+//            v.parent.requestDisallowInterceptTouchEvent(true)
+//            false
+//        }
         holder.itemView.todoToolbarMenu.setOnClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView.todoToolbarMenu)
             popupMenu.inflate(R.menu.adapter_menu)
