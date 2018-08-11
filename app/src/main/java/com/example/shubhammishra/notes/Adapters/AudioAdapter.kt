@@ -51,9 +51,16 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
                 it.audioMediaPlayer.setImageResource(R.drawable.media_stop)
                 mediaPlayer = MediaPlayer()
                 try {
+                    holder.itemView.showPlay.visibility=View.VISIBLE
+                    holder.itemView.audioMediaPlayer.visibility=View.GONE
                     mediaPlayer!!.setDataSource(listAudio[position].recordUrl)
-                    mediaPlayer!!.prepare()
-                    mediaPlayer!!.start()
+//                    mediaPlayer!!.prepare()
+                    mediaPlayer!!.setOnPreparedListener {
+                        it.start()
+                        holder.itemView.showPlay.visibility=View.GONE
+                        holder.itemView.audioMediaPlayer.visibility=View.VISIBLE
+                    }
+                    mediaPlayer!!.prepareAsync()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -63,6 +70,10 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
                 mediaPlayer!!.stop()
                 mediaPlayer!!.release()
                 tag = false
+            }
+            mediaPlayer!!.setOnCompletionListener {
+                tag=false
+                holder.itemView.audioMediaPlayer.setImageResource(R.drawable.media_play)
             }
         }
         holder.itemView.audioToolTitle.text=listAudio[position].recordName

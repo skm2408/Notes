@@ -107,6 +107,7 @@ class record : Fragment() {
                     timer!!.cancel()
                     try {
                         mediaRecorder.stop()
+                        mediaRecorder.reset()
                         mediaRecorder.release()
                         uploadAudio()
                         llRecording.visibility = View.GONE
@@ -136,6 +137,7 @@ class record : Fragment() {
             } else {
                 view1.btPlay.setImageResource(R.drawable.ic_action_music_play)
                 mediaPlayer.stop()
+                mediaPlayer.reset()
                 mediaPlayer.release()
                 tag = false
             }
@@ -143,14 +145,20 @@ class record : Fragment() {
 
     }
 
-    override fun onDestroyView() {
-        if(mediaPlayer.isPlaying)
-        {
-            mediaPlayer.stop()
-            mediaPlayer.release()
-        }
-        super.onDestroyView()
-    }
+//    override fun onDestroyView() {
+//        if(mediaPlayer.isPlaying)
+//        {
+//            mediaPlayer.stop()
+//            mediaPlayer.reset()
+//            mediaPlayer.release()
+//        }
+//        val fragment=activity!!.supportFragmentManager.findFragmentById(R.layout.fragment_record)
+//        if(fragment!=null)
+//        {
+//            activity!!.getSupportFragmentManager().beginTransaction().remove(fragment).commit()
+//        }
+//        super.onDestroyView()
+//    }
 
     private fun uploadAudio() {
         progressDialog = ProgressDialog(view1.context)
@@ -170,7 +178,8 @@ class record : Fragment() {
                 databaseReference.setValue(recording)
                 Snackbar.make(view1, "Saved Successfully", Snackbar.LENGTH_INDEFINITE).setAction("Go to Homepage",object:View.OnClickListener{
                     override fun onClick(v: View?) {
-                        startActivity(Intent(view1.context,MainActivity::class.java))
+                        val file=File(pathSave)
+                        file.delete()
                         activity!!.finish()
                     }
                 }).show()
