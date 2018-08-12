@@ -60,7 +60,15 @@ class record : Fragment() {
         alertDialog.setMessage("Create a new Record File before you Proceed")
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Save", object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface?, which: Int) {
-                filePath = mView.etFileName.text.toString()
+                if(mView.etFileName.text.toString().isEmpty())
+                {
+                    Toast.makeText(view1.context,"Empty File Name",Toast.LENGTH_SHORT).show()
+                   activity!!.finish()
+                }
+                else
+                {
+                    filePath = mView.etFileName.text.toString()
+                }
             }
         })
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", object : DialogInterface.OnClickListener {

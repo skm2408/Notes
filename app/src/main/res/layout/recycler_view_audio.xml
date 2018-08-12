@@ -10,7 +10,7 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/colorPrimaryDark">
+        android:background="#2d2d2d">
         <TextView
             android:id="@+id/audioToolTitle"
             android:layout_width="match_parent"
@@ -31,10 +31,10 @@
             android:layout_gravity="end"
             android:background="@android:color/transparent"
             android:gravity="center"
-            android:padding="10dp"
+            android:padding="5dp"
             android:elevation="3dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/menu_dot" />
+            android:src="@drawable/white_dots" />
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout

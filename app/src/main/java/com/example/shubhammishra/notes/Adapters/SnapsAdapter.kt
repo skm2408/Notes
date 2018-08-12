@@ -1,5 +1,6 @@
 package com.example.shubhammishra.notes.Adapters
 import android.app.AlertDialog
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -49,21 +50,15 @@ class SnapsAdapter(var snapList: ArrayList<Snaps>) : RecyclerView.Adapter<SnapsA
     override fun getItemCount(): Int = snapList.size
 
     override fun onBindViewHolder(holder: SnapViewHolder, position: Int) {
-        Glide.with(holder.itemView).load(snapList[position].imgUrl).into(holder.itemView.snapImage)
+        Glide.with(holder.itemView.context).load(snapList[position].imgUrl).into(holder.itemView.snapImage)
         holder.itemView.snapTitle.text = snapList[position].title
         holder.itemView.snapImage.setOnClickListener {
-            val alertDialog=AlertDialog.Builder(holder.itemView.context).create()
             val lf=holder.itemView.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val mView=lf.inflate(R.layout.zoomable_imageview,null)
-            Picasso.get().load(snapList[position].imgUrl).placeholder(R.drawable.load_image).into(mView.zoomable_view)
-            alertDialog.setView(mView)
-            alertDialog.setCancelable(false)
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Exit",object:DialogInterface.OnClickListener{
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    alertDialog.dismiss()
-                }
-            })
-            alertDialog.show()
+            Picasso.get().load(snapList[position].imgUrl).placeholder(R.drawable.load_image).fit().centerInside().into(mView.zoomable_view)
+            val dialog=Dialog(mView.context,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+            dialog.setContentView(mView)
+            dialog.show()
         }
         holder.itemView.snapText.text = snapList[position].description
         holder.itemView.toolBarMenu.setOnClickListener {

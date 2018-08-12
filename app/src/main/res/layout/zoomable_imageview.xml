@@ -5,5 +5,7 @@
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/zoomable_view"
         android:layout_width="match_parent"
+        android:scaleType="fitStart"
+        android:adjustViewBounds="true"
         android:layout_height="match_parent" />
 </FrameLayout>
