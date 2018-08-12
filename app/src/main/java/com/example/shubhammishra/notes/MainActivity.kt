@@ -24,6 +24,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.shubhammishra.notes.Classes.Snaps
 import com.example.shubhammishra.notes.Classes.UserInfo
 import com.example.shubhammishra.notes.Fragments.*
@@ -196,7 +197,8 @@ class MainActivity : AppCompatActivity() {
                 userInfo?.let {
                     user=it
                     user?.let {
-                        Picasso.get().load(it.dpUrl).placeholder(R.drawable.profile_placeholder).into(headerView.navImage)
+                        //Picasso.get().load(it.dpUrl).placeholder(R.drawable.profile_placeholder).into(headerView.navImage)
+                        Glide.with(this@MainActivity).load(it.dpUrl).thumbnail(Glide.with(this@MainActivity).load(R.drawable.profile_placeholder)).into(headerView.navImage)
                         headerView.tvUserName.text = it.userName
                         headerView.tvUserEmail.text = it.email
                     }

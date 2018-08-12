@@ -5,6 +5,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.example.shubhammishra.notes.Adapters.SnapsAdapter
 import com.example.shubhammishra.notes.Classes.Snaps
 import com.example.shubhammishra.notes.R
@@ -53,6 +54,7 @@ class CameraFragment: android.support.v4.app.Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view1= inflater!!.inflate(R.layout.list_view_camera,null)
+        activity!!.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         return view1
     }
 }

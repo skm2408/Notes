@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -27,6 +28,8 @@ class MainFragment : Fragment() {
         val view=inflater.inflate(R.layout.fragment_main, container, false)
         auth= FirebaseAuth.getInstance()
         view.btnSign.setOnClickListener({
+            val imm=myContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.fragmentLayout.windowToken,0)
             view.getProgressStatus.visibility= View.VISIBLE
             val email=view.etEmail.text.toString()
             val password=view.etPassword.text.toString()
@@ -46,7 +49,7 @@ class MainFragment : Fragment() {
                     }
                     else
                     {
-                        Toast.makeText(view.context,"Something went wrong!!..Email or password is incorrect", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(view.context,"Email or password is incorrect", Toast.LENGTH_SHORT).show()
                     }
                     view.getProgressStatus.visibility=View.GONE
                 }

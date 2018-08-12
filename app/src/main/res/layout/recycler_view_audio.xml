@@ -10,7 +10,7 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="#2d2d2d">
+        android:background="#1B233D">
         <TextView
             android:id="@+id/audioToolTitle"
             android:layout_width="match_parent"

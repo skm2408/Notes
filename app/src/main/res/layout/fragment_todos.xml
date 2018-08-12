@@ -8,13 +8,13 @@
     <EditText
         android:id="@+id/todoEditText"
         android:background="@android:color/transparent"
-        android:layout_width="258dp"
+        android:layout_width="255dp"
         android:layout_height="50dp"
         android:hint="Todo Item" />
     <ImageButton
         android:id="@+id/btnSave"
         android:src="@drawable/ic_action_save_notes"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <ImageButton
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="55dp"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_action_plus" />
     <android.support.v7.widget.RecyclerView

@@ -9,9 +9,9 @@
     tools:openDrawer="start">
 
     <android.support.design.widget.CoordinatorLayout
-        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBar"
@@ -19,6 +19,7 @@
             android:layout_height="180dp"
             android:elevation="3dp"
             android:fitsSystemWindows="true">
+
             <include layout="@layout/layout_toolbar" />
         </android.support.design.widget.AppBarLayout>
 
@@ -52,6 +53,8 @@
             android:background="@android:color/transparent"
             app:layout_anchor="@id/nestedScrollView"
             app:layout_anchorGravity="bottom|end"
+            app:menu_colorNormal="@color/colorAccent"
+            app:menu_colorPressed="@color/colorPrimary"
             app:menu_openDirection="up"
             app:menu_showShadow="true">
 
@@ -60,6 +63,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_todos"
+                app:fab_colorNormal="@color/colorPrimary"
+                app:fab_colorPressed="@color/colorPrimaryDark"
                 app:fab_label="Todo List"
                 app:fab_showShadow="true"
                 app:fab_size="mini" />
@@ -68,7 +73,9 @@
                 android:id="@+id/btnFloatingRecording"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_recording"
+                android:src="@drawable/voice"
+                app:fab_colorNormal="@color/colorPrimary"
+                app:fab_colorPressed="@color/colorPrimaryDark"
                 app:fab_label="Recordings"
                 app:fab_showShadow="true"
                 app:fab_size="mini" />
@@ -78,6 +85,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_camera"
+                app:fab_colorNormal="@color/colorPrimary"
+                app:fab_colorPressed="@color/colorPrimaryDark"
                 app:fab_label="Snaps"
                 app:fab_showShadow="true"
                 app:fab_size="mini" />
@@ -87,6 +96,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_notes"
+                app:fab_colorNormal="@color/colorPrimary"
+                app:fab_colorPressed="@color/colorPrimaryDark"
                 app:fab_label="Notes"
                 app:fab_showShadow="true"
                 app:fab_size="mini" />
