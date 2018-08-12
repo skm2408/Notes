@@ -147,11 +147,13 @@ class MainActivity : AppCompatActivity() {
 
         fDatabase = FirebaseDatabase.getInstance().reference
         btnFloatingTodos.setOnClickListener({
+            btnFloatingAction.close(true)
             val intent = Intent(this, NewIntent::class.java)
             intent.putExtra("Pressed", "Todos")
             startActivity(intent)
         })
         btnFloatingCamera.setOnClickListener {
+            btnFloatingAction.close(true)
             val alertDialog = AlertDialog.Builder(this@MainActivity).create()
             mView = layoutInflater.inflate(R.layout.camera_view, null)
             alertDialog.setView(mView)
@@ -198,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                     user=it
                     user?.let {
                         //Picasso.get().load(it.dpUrl).placeholder(R.drawable.profile_placeholder).into(headerView.navImage)
-                        Glide.with(this@MainActivity).load(it.dpUrl).thumbnail(Glide.with(this@MainActivity).load(R.drawable.profile_placeholder)).into(headerView.navImage)
+                        Glide.with(applicationContext).load(it.dpUrl).thumbnail(Glide.with(applicationContext).load(R.drawable.profile_placeholder)).into(headerView.navImage)
                         headerView.tvUserName.text = it.userName
                         headerView.tvUserEmail.text = it.email
                     }
@@ -217,11 +219,13 @@ class MainActivity : AppCompatActivity() {
             }
         })
         btnFloatingRecording.setOnClickListener {
+            btnFloatingAction.close(true)
             val intent = Intent(this, NewIntent::class.java)
             intent.putExtra("Pressed", "Recording")
             startActivity(intent)
         }
         btnFloatingNotes.setOnClickListener {
+            btnFloatingAction.close(true)
             val intent = Intent(this, NewIntent::class.java)
             intent.putExtra("Pressed", "Notes")
             startActivity(intent)
@@ -268,7 +272,7 @@ class MainActivity : AppCompatActivity() {
             dialog.setCancelable(false)
             dialog.show()
             val currentUser = auth.currentUser!!.uid
-            val filepath = fStorage.child(currentUser).child(imageUri.lastPathSegment)
+            val filepath = fStorage.child(currentUser).child(imageUri.lastPathSegment+System.currentTimeMillis().toString())
             filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
                 override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
                     var downloadUrl: Uri? = null
