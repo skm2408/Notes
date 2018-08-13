@@ -5,13 +5,17 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.app.ProgressDialog
+import android.content.ContentValues
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
@@ -20,6 +24,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -36,31 +41,43 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.alert_options.view.*
 import kotlinx.android.synthetic.main.alert_signup.view.*
 import kotlinx.android.synthetic.main.camera_view.view.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.navbar_profile.view.*
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
-    var user:UserInfo?=null
+    var user: UserInfo? = null
     lateinit var fStorage: StorageReference
     lateinit var fDatabase: DatabaseReference
     lateinit var mView: View
     lateinit var imageUri: Uri
     lateinit var signUpImageUri: Uri
     val Gallery_Request = 1
+    val Camera_Request=2
     @SuppressLint("SetTextI18n")
     lateinit var mToggle: ActionBarDrawerToggle
     lateinit var auth: FirebaseAuth
     lateinit var alertView: View
     lateinit var progressDialog: ProgressDialog
     val SignUp_Code = 120
+    val values:ContentValues= ContentValues()
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 
         if (requestCode == 100) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED) {
                 Toast.makeText(this@MainActivity, "Can't Process Without your permission", Toast.LENGTH_SHORT).show()
                 finish()
+            }
+        }
+        else if(requestCode==601)
+        {
+            if(grantResults[0]==PackageManager.PERMISSION_DENIED)
+            {
+                Toast.makeText(this@MainActivity,"Can't Proceed Without your permission",Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -128,9 +145,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         DoVerification()
-        supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator, NoteFragment()).commit()
         toolBarImage.setImageResource(R.drawable.back_home_notes)
-        toolBarText.text="Notes"
+        toolBarText.text = "Notes"
         val readPermission = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
         val writePermission = ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (readPermission == PackageManager.PERMISSION_DENIED || writePermission == PackageManager.PERMISSION_DENIED) {
@@ -159,9 +176,7 @@ class MainActivity : AppCompatActivity() {
             alertDialog.setView(mView)
             alertDialog.setTitle("SNAPS")
             mView.alertImage.setOnClickListener({
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.setType("image/*")
-                startActivityForResult(intent, Gallery_Request)
+                generateOptions(mView)
             })
             alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Save", object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
@@ -177,7 +192,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val nameRef = fDatabase.child("Users").child(auth.currentUser!!.uid)
-        val headerView=navView.getHeaderView(0)
+        val headerView = navView.getHeaderView(0)
         nameRef.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
@@ -197,7 +212,7 @@ class MainActivity : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val userInfo = p0.getValue(UserInfo::class.java)
                 userInfo?.let {
-                    user=it
+                    user = it
                     user?.let {
                         //Picasso.get().load(it.dpUrl).placeholder(R.drawable.profile_placeholder).into(headerView.navImage)
                         Glide.with(applicationContext).load(it.dpUrl).thumbnail(Glide.with(applicationContext).load(R.drawable.profile_placeholder)).into(headerView.navImage)
@@ -230,49 +245,72 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("Pressed", "Notes")
             startActivity(intent)
         }
-        bottomNavMenu.setOnNavigationItemSelectedListener(object:BottomNavigationView.OnNavigationItemSelectedListener {
-             override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                 if(item.itemId.equals(R.id.bottomNotes))
-                 {
-                     toolBarImage.setImageResource(R.drawable.back_home_notes)
-                     toolBarText.text="Notes"
-                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
-                 }
-                 else if(item.itemId.equals(R.id.bottomSnaps))
-                 {
-                     toolBarImage.setImageResource(R.drawable.back_home_camera)
-                     toolBarText.text="Snaps"
-                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,CameraFragment()).commit()
-                 }
-                 else if(item.itemId.equals(R.id.bottomTodos))
-                 {
-                     toolBarImage.setImageResource(R.drawable.back_home_todos)
-                     toolBarText.text="Todo List"
-                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,TodoFragment()).commit()
-                 }
-                 else
-                 {
-                     toolBarImage.setImageResource(R.drawable.back_home_voice)
-                     toolBarText.text="Recordings"
-                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,VoiceFragment()).commit()
-                 }
-                 return true
-             }
-         })
+        bottomNavMenu.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
+            override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                if (item.itemId.equals(R.id.bottomNotes)) {
+                    toolBarImage.setImageResource(R.drawable.back_home_notes)
+                    toolBarText.text = "Notes"
+                    supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).replace(R.id.mainActivityCoordinator, NoteFragment()).commit()
+                } else if (item.itemId.equals(R.id.bottomSnaps)) {
+                    toolBarImage.setImageResource(R.drawable.back_home_camera)
+                    toolBarText.text = "Snaps"
+                    supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).replace(R.id.mainActivityCoordinator, CameraFragment()).commit()
+                } else if (item.itemId.equals(R.id.bottomTodos)) {
+                    toolBarImage.setImageResource(R.drawable.back_home_todos)
+                    toolBarText.text = "Todo List"
+                    supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).replace(R.id.mainActivityCoordinator, TodoFragment()).commit()
+                } else {
+                    toolBarImage.setImageResource(R.drawable.back_home_voice)
+                    toolBarText.text = "Recordings"
+                    supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).replace(R.id.mainActivityCoordinator, VoiceFragment()).commit()
+                }
+                return true
+            }
+        })
+    }
+
+    private fun generateOptions(view: View) {
+        val alertDialog = AlertDialog.Builder(view.context).create()
+        val mView = (view.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.alert_options, null)
+        mView.gallery_options.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.setType("image/*")
+            startActivityForResult(intent, Gallery_Request)
+            alertDialog.dismiss()
+        }
+        mView.camera_options.setOnClickListener {
+            val permission=ContextCompat.checkSelfPermission(view.context,Manifest.permission.CAMERA)
+            if(permission==PackageManager.PERMISSION_GRANTED)
+            {
+                values.put(MediaStore.Images.Media.TITLE,"New Picture")
+                values.put(MediaStore.Images.Media.DESCRIPTION,"From Camera")
+                imageUri=contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
+                val intent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri)
+                startActivityForResult(intent,Camera_Request)
+                alertDialog.dismiss()
+            }else
+            {
+                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA),601)
+            }
+        }
+        alertDialog.setView(mView)
+        alertDialog.setTitle("Choose")
+        alertDialog.show()
     }
 
     private fun startToSave() {
         val title = mView.alertTitle.text.toString().trim()
         val desc = mView.alertMessage.text.toString().trim()
-        val initialDraw=(resources.getDrawable(R.drawable.add_image) as BitmapDrawable).bitmap
-        val finalDraw=(mView.alertImage.drawable as BitmapDrawable).bitmap
-        if (!title.isEmpty() && !desc.isEmpty()&&(!initialDraw.sameAs(finalDraw))) {
+        val initialDraw = (resources.getDrawable(R.drawable.add_image) as BitmapDrawable).bitmap
+        val finalDraw = (mView.alertImage.drawable as BitmapDrawable).bitmap
+        if (!title.isEmpty() && !desc.isEmpty() && (!initialDraw.sameAs(finalDraw))) {
             val dialog = AlertDialog.Builder(this@MainActivity).create()
             dialog.setMessage("Saving....")
             dialog.setCancelable(false)
             dialog.show()
             val currentUser = auth.currentUser!!.uid
-            val filepath = fStorage.child(currentUser).child(imageUri.lastPathSegment+System.currentTimeMillis().toString())
+            val filepath = fStorage.child(currentUser).child(imageUri.lastPathSegment + System.currentTimeMillis().toString())
             filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
                 override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
                     var downloadUrl: Uri? = null
@@ -280,7 +318,7 @@ class MainActivity : AppCompatActivity() {
                         override fun onSuccess(p0: Uri?) {
                             downloadUrl = p0!!
                             val childData = fDatabase.child(currentUser).child("Snaps").push()
-                            childData.setValue(Snaps(System.currentTimeMillis().toString(),title, desc, downloadUrl.toString()))
+                            childData.setValue(Snaps(System.currentTimeMillis().toString(), title, desc, downloadUrl.toString()))
                             dialog.dismiss()
                             Toast.makeText(this@MainActivity, "Saved Successfully", Toast.LENGTH_SHORT).show()
                         }
@@ -298,9 +336,13 @@ class MainActivity : AppCompatActivity() {
             imageUri = data!!.data
             mView.alertImage.setImageURI(imageUri)
         }
-        if (requestCode == SignUp_Code && resultCode == Activity.RESULT_OK) {
+        else if (requestCode == SignUp_Code && resultCode == Activity.RESULT_OK) {
             signUpImageUri = data!!.data
             alertView.sign_up_image.setImageURI(signUpImageUri)
+        }
+        else if(requestCode==Camera_Request&&resultCode==Activity.RESULT_OK)
+        {
+            mView.alertImage.setImageURI(imageUri)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -308,12 +350,9 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        }
-        else if(btnFloatingAction.isOpened)
-        {
+        } else if (btnFloatingAction.isOpened) {
             btnFloatingAction.close(true)
-        }
-        else
+        } else
             super.onBackPressed()
     }
 
