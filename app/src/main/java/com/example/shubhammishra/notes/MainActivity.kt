@@ -236,25 +236,25 @@ class MainActivity : AppCompatActivity() {
                  {
                      toolBarImage.setImageResource(R.drawable.back_home_notes)
                      toolBarText.text="Notes"
-                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
+                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,NoteFragment()).commit()
                  }
                  else if(item.itemId.equals(R.id.bottomSnaps))
                  {
                      toolBarImage.setImageResource(R.drawable.back_home_camera)
                      toolBarText.text="Snaps"
-                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,CameraFragment()).commit()
+                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,CameraFragment()).commit()
                  }
                  else if(item.itemId.equals(R.id.bottomTodos))
                  {
                      toolBarImage.setImageResource(R.drawable.back_home_todos)
                      toolBarText.text="Todo List"
-                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,TodoFragment()).commit()
+                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,TodoFragment()).commit()
                  }
                  else
                  {
                      toolBarImage.setImageResource(R.drawable.back_home_voice)
                      toolBarText.text="Recordings"
-                     supportFragmentManager.beginTransaction().replace(R.id.mainActivityCoordinator,VoiceFragment()).commit()
+                     supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainActivityCoordinator,VoiceFragment()).commit()
                  }
                  return true
              }

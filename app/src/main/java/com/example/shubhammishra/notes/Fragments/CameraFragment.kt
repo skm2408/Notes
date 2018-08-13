@@ -1,6 +1,8 @@
 package com.example.shubhammishra.notes.Fragments
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +16,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.list_view_camera.*
 import kotlinx.android.synthetic.main.list_view_camera.view.*
 
 class CameraFragment: android.support.v4.app.Fragment() {
@@ -54,7 +57,7 @@ class CameraFragment: android.support.v4.app.Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view1= inflater!!.inflate(R.layout.list_view_camera,null)
-        activity!!.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        activity!!.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         return view1
     }
 }

@@ -1,6 +1,8 @@
 package com.example.shubhammishra.notes.Adapters
 
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -9,6 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import com.example.shubhammishra.notes.Classes.GetTodo
 import com.example.shubhammishra.notes.Classes.GetTodoList
@@ -30,7 +33,7 @@ class TodoListAdapter(var todoList: ArrayList<GetTodoList>) : RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: TodoListViewHolder, position: Int) {
         val adapter = TodoViewAdapter(todoList[position].todoArray)
-        holder.itemView.todoToolbarText.text="                    "
+        holder.itemView.todoToolbarText.text = "                    "
         holder.itemView.todoListRecyclerView.layoutManager = LinearLayoutManager(view1.context)
         holder.itemView.todoListRecyclerView.adapter = adapter
         holder.itemView.todoToolbarMenu.setOnClickListener {
@@ -38,14 +41,14 @@ class TodoListAdapter(var todoList: ArrayList<GetTodoList>) : RecyclerView.Adapt
             popupMenu.inflate(R.menu.adapter_menu)
             popupMenu.setOnMenuItemClickListener {
                 if (it.itemId.equals(R.id.menuEdit)) {
-                    alertEditTodos(todoList[position].todoArray,position,holder.itemView.context)
+                    alertEditTodos(todoList[position].todoArray, position, holder.itemView.context, todoList[position].id)
                     true
                 } else if (it.itemId.equals(R.id.menuDelete)) {
-                    deleteTodos(todoList[position],position)
-                    Toast.makeText(holder.itemView.context,"Deleted Successfully",Toast.LENGTH_SHORT).show()
+                    deleteTodos(todoList[position], position)
+                    Toast.makeText(holder.itemView.context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
                     true
                 } else if (it.itemId.equals(R.id.menuShare)) {
-                    shareTodos(todoList[position],holder.itemView)
+                    shareTodos(todoList[position], holder.itemView)
                     true
 
                 }
@@ -55,12 +58,11 @@ class TodoListAdapter(var todoList: ArrayList<GetTodoList>) : RecyclerView.Adapt
         }
     }
 
-    private fun shareTodos(getTodoList: GetTodoList,view:View) {
-           var shareString="Todos:\n"
-            for (i in 0..getTodoList.todoArray.size-1)
-            {
-                shareString+=getTodoList.todoArray[i].text+"\n"
-            }
+    private fun shareTodos(getTodoList: GetTodoList, view: View) {
+        var shareString = "Todos:\n"
+        for (i in 0..getTodoList.todoArray.size - 1) {
+            shareString += getTodoList.todoArray[i].text + "\n"
+        }
         val intent: Intent = Intent()
         intent.setAction(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_TEXT, shareString)
@@ -69,8 +71,8 @@ class TodoListAdapter(var todoList: ArrayList<GetTodoList>) : RecyclerView.Adapt
     }
 
     private fun deleteTodos(getTodoList: GetTodoList, position: Int) {
-        val uid= FirebaseAuth.getInstance().currentUser!!.uid
-        val databaseRef=FirebaseDatabase.getInstance().reference.child(uid).child("Todos")
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        val databaseRef = FirebaseDatabase.getInstance().reference.child(uid).child("Todos")
         val query: Query = databaseRef.orderByChild("id").equalTo(getTodoList.id)
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -89,23 +91,72 @@ class TodoListAdapter(var todoList: ArrayList<GetTodoList>) : RecyclerView.Adapt
         })
     }
 
-    private fun alertEditTodos(todoArray: ArrayList<GetTodo>, position: Int, context: Context?) {
-        val alertDialog=AlertDialog.Builder(context!!).create()
-        alertDialog.setTitle("Edit Box")
-        alertDialog.setIcon(R.drawable.menu_edit)
-        val lf=context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val mView=lf.inflate(R.layout.recycler_view_todos,null)
-        alertDialog.setView(mView)
-        val adapter = TodoViewAdapter(todoArray)
+    private fun alertEditTodos(todoArray: ArrayList<GetTodo>, position: Int, context: Context?, id: String) {
+//        val alertDialog=AlertDialog.Builder(context!!).create()
+//        alertDialog.setTitle("Edit Box")
+//        alertDialog.setIcon(R.drawable.menu_edit)
+        val lf = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val mView = lf.inflate(R.layout.recycler_view_todos, null)
+        //alertDialog.setView(mView)
+        val adapter = TodoEditAdapter(todoArray)
         mView.todoListRecyclerView.layoutManager = LinearLayoutManager(context)
         mView.todoListRecyclerView.adapter = adapter
-        mView.todoToolbar.visibility=View.GONE
+        mView.todoToolbar.visibility = View.GONE
         mView.todoListRecyclerView.setOnTouchListener { v, event ->
             v.parent.requestDisallowInterceptTouchEvent(false)
             false
         }
-        alertDialog.show()
+//        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save",object:DialogInterface.OnClickListener{
+//            override fun onClick(dialog: DialogInterface?, which: Int) {
+//                val auth = FirebaseAuth.getInstance().currentUser!!.uid
+//                val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Todos")
+//                val query: Query = dataBaseReference.orderByChild("id").equalTo(id)
+//                query.addListenerForSingleValueEvent(object : ValueEventListener {
+//                    override fun onCancelled(p0: DatabaseError) {
+//
+//                    }
+//
+//                    override fun onDataChange(p0: DataSnapshot) {
+//                        p0.children.forEach {
+//                            if (it.child("id").value!!.equals(id)) {
+//                                it.ref.setValue(GetTodoList(id,todoArray))
+//                            }
+//                        }
+//                        todoList[position]=GetTodoList(id,todoArray)
+//                        notifyDataSetChanged()
+//                        alertDialog.dismiss()
+//                    }
+//                })
+//            }
+//        })
+//        alertDialog.show()
+        val dialog = Dialog(context,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.setContentView(mView)
+        dialog.setTitle("Edit Box")
+        val params=mView.todoListRecyclerView.layoutParams
+        params.height=3000
+        mView.todoListRecyclerView.layoutParams=params
+        dialog.setOnDismissListener {
+            val auth = FirebaseAuth.getInstance().currentUser!!.uid
+                val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Todos")
+                val query: Query = dataBaseReference.orderByChild("id").equalTo(id)
+                query.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        p0.children.forEach {
+                            if (it.child("id").value!!.equals(id)) {
+                                it.ref.setValue(GetTodoList(id,todoArray))
+                            }
+                        }
+                        todoList[position]=GetTodoList(id,todoArray)
+                        notifyDataSetChanged()
+                    }
+                })
+            }
+        dialog.show()
     }
 
     inner class TodoListViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {

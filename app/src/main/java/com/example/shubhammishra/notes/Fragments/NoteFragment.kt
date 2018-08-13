@@ -1,6 +1,7 @@
 package com.example.shubhammishra.notes.Fragments
 
 import android.app.Fragment
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater

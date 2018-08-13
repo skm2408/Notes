@@ -30,35 +30,35 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
-class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
-    lateinit var progressDialog:ProgressDialog
+class AudioAdapter(var listAudio: ArrayList<Recording>) : RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
+    lateinit var progressDialog: ProgressDialog
     lateinit var context: Context
+    lateinit var view1: View
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
-        val lf=parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        return AudioViewHolder(lf.inflate(R.layout.recycler_view_audio,parent,false))
+        val lf = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        view1 = lf.inflate(R.layout.recycler_view_audio, parent, false)
+        return AudioViewHolder(view1)
     }
 
-    override fun getItemCount(): Int =listAudio.size
-    override fun getItemViewType(position: Int): Int =position
+    override fun getItemCount(): Int = listAudio.size
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
-        var mediaPlayer:MediaPlayer?=null
-        context=holder.itemView.context
-        holder.itemView.audioTitle.text=listAudio[position].recordName
+        var mediaPlayer: MediaPlayer? = null
+        context = holder.itemView.context
+        holder.itemView.audioTitle.text = listAudio[position].recordName
         var tag = false
         holder.itemView.audioMediaPlayer.setOnClickListener {
             if (tag == false) {
                 it.audioMediaPlayer.setImageResource(R.drawable.media_stop)
                 mediaPlayer = MediaPlayer()
                 try {
-                    holder.itemView.showPlay.visibility=View.VISIBLE
-                    holder.itemView.audioMediaPlayer.visibility=View.GONE
+                    holder.itemView.showPlay.visibility = View.VISIBLE
+                    holder.itemView.audioMediaPlayer.visibility = View.GONE
                     mediaPlayer!!.setDataSource(listAudio[position].recordUrl)
-//                    mediaPlayer!!.prepare()
                     mediaPlayer!!.setOnPreparedListener {
                         it.start()
-                        holder.itemView.showPlay.visibility=View.GONE
-                        holder.itemView.audioMediaPlayer.visibility=View.VISIBLE
+                        holder.itemView.showPlay.visibility = View.GONE
+                        holder.itemView.audioMediaPlayer.visibility = View.VISIBLE
                     }
                     mediaPlayer!!.prepareAsync()
                 } catch (e: IOException) {
@@ -72,23 +72,20 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
                 tag = false
             }
             mediaPlayer!!.setOnCompletionListener {
-                tag=false
+                tag = false
                 holder.itemView.audioMediaPlayer.setImageResource(R.drawable.media_play)
             }
         }
-        holder.itemView.audioToolTitle.text=listAudio[position].recordName
+        holder.itemView.audioToolTitle.text = listAudio[position].recordName
         holder.itemView.audioToolMenu.setOnClickListener {
-            val popupMenu=PopupMenu(holder.itemView.context,holder.itemView.audioToolMenu)
+            val popupMenu = PopupMenu(holder.itemView.context, holder.itemView.audioToolMenu)
             popupMenu.inflate(R.menu.record_menu)
             popupMenu.setOnMenuItemClickListener {
 
-                if(it.itemId.equals(R.id.menuDelete))
-                {
-                    deleteFromFireBase(listAudio[position],position)
-                    Toast.makeText(holder.itemView.context,"Deleted Successfully",Toast.LENGTH_SHORT).show()
-                }
-                else if(it.itemId.equals(R.id.menuShare))
-                {
+                if (it.itemId.equals(R.id.menuDelete)) {
+                    deleteFromFireBase(listAudio[position], position)
+                    Toast.makeText(holder.itemView.context, "Deleted Successfully", Toast.LENGTH_SHORT).show()
+                } else if (it.itemId.equals(R.id.menuShare)) {
                     GetAudio(listAudio[position]).execute()
                 }
                 false
@@ -96,40 +93,37 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
             popupMenu.show()
         }
     }
-    inner class GetAudio(var url:Recording): AsyncTask<Recording, Unit, String>()
-    {
+
+    inner class GetAudio(var url: Recording) : AsyncTask<Recording, Unit, String>() {
         override fun doInBackground(vararg params: Recording?): String {
-            var path=""
-            var count=0
+            var path = ""
+            var count = 0
             try {
-                val Url=URL(url.recordUrl)
-                val rl=Url.openConnection()
+                val Url = URL(url.recordUrl)
+                val rl = Url.openConnection()
                 rl.connect()
-                val input=BufferedInputStream(Url.openStream())
-                val dir=Environment.getExternalStorageDirectory().absoluteFile
-                val myDir= File("$dir/Notes/Recording")
+                val input = BufferedInputStream(Url.openStream())
+                val dir = Environment.getExternalStorageDirectory().absoluteFile
+                val myDir = File("$dir/Notes/Recording")
                 myDir.mkdirs()
-                val fileName="Audio-${url.recordName}.3gp"
-                val file=File(myDir,fileName)
-                if(file.exists())
+                val fileName = "Audio-${url.recordName}.3gp"
+                val file = File(myDir, fileName)
+                if (file.exists())
                     file.delete()
-                val out=FileOutputStream(file)
-                val byte= ByteArray(1024)
-                while(true)
-                {
-                    count=input.read(byte)
-                    if(count!=-1)
-                        out.write(byte,0,count)
+                val out = FileOutputStream(file)
+                val byte = ByteArray(1024)
+                while (true) {
+                    count = input.read(byte)
+                    if (count != -1)
+                        out.write(byte, 0, count)
                     else
                         break
                 }
                 out.flush()
                 out.close()
                 input.close()
-                path="$dir/Notes/Recording/$fileName"
-            }
-            catch (e:IOException)
-            {
+                path = "$dir/Notes/Recording/$fileName"
+            } catch (e: IOException) {
                 e.printStackTrace()
             }
             return path
@@ -137,11 +131,12 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
 
         override fun onPostExecute(result: String?) {
             progressDialog.dismiss()
-            shareAudio(result!!,context)
+            shareAudio(result!!, context)
             super.onPostExecute(result)
         }
+
         override fun onPreExecute() {
-            progressDialog= ProgressDialog(context)
+            progressDialog = ProgressDialog(context)
             progressDialog.create()
             progressDialog.setMessage("Preparing Audio to Share")
             progressDialog.setCancelable(false)
@@ -149,28 +144,28 @@ class AudioAdapter(var listAudio:ArrayList<Recording>): RecyclerView.Adapter<Aud
             super.onPreExecute()
         }
     }
-    private fun shareAudio(path:String, context: Context?) {
-        val intent= Intent(Intent.ACTION_SEND)
+
+    private fun shareAudio(path: String, context: Context?) {
+        val intent = Intent(Intent.ACTION_SEND)
         intent.setType("audio/*")
         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(path)))
-        context!!.startActivity(Intent.createChooser(intent,"Share Audio Via"))
+        context!!.startActivity(Intent.createChooser(intent, "Share Audio Via"))
     }
 
-    private fun deleteFromFireBase(recording: Recording,position:Int) {
-        val auth= FirebaseAuth.getInstance().currentUser!!.uid
-        val dataBaseReference=FirebaseDatabase.getInstance().reference.child(auth).child("Recordings")
-        val query:Query=dataBaseReference.orderByChild("id").equalTo(recording.id)
-        val dataStorage=FirebaseStorage.getInstance().reference.child(auth).storage.getReferenceFromUrl(recording.recordUrl)
+    private fun deleteFromFireBase(recording: Recording, position: Int) {
+        val auth = FirebaseAuth.getInstance().currentUser!!.uid
+        val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Recordings")
+        val query: Query = dataBaseReference.orderByChild("id").equalTo(recording.id)
+        val dataStorage = FirebaseStorage.getInstance().reference.child(auth).storage.getReferenceFromUrl(recording.recordUrl)
         dataStorage.delete().addOnSuccessListener {
-            query.addListenerForSingleValueEvent(object:ValueEventListener{
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
                     p0.children.forEach {
-                        if(it.child("id").value!!.equals(recording.id))
-                        {
+                        if (it.child("id").value!!.equals(recording.id)) {
                             it.ref.removeValue()
                         }
                     }
