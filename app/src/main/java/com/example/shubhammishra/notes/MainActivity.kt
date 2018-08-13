@@ -23,10 +23,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -41,9 +44,12 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.alert_dialog_layout.view.*
 import kotlinx.android.synthetic.main.alert_options.view.*
 import kotlinx.android.synthetic.main.alert_signup.view.*
 import kotlinx.android.synthetic.main.camera_view.view.*
+import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.view.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.navbar_profile.view.*
 import java.io.ByteArrayOutputStream
@@ -57,14 +63,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var imageUri: Uri
     lateinit var signUpImageUri: Uri
     val Gallery_Request = 1
-    val Camera_Request=2
+    val Camera_Request = 2
     @SuppressLint("SetTextI18n")
     lateinit var mToggle: ActionBarDrawerToggle
     lateinit var auth: FirebaseAuth
     lateinit var alertView: View
+    lateinit var dpView: View
     lateinit var progressDialog: ProgressDialog
     val SignUp_Code = 120
-    val values:ContentValues= ContentValues()
+    val DpChange = 111
+    val values: ContentValues = ContentValues()
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 
         if (requestCode == 100) {
@@ -72,12 +80,9 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Can't Process Without your permission", Toast.LENGTH_SHORT).show()
                 finish()
             }
-        }
-        else if(requestCode==601)
-        {
-            if(grantResults[0]==PackageManager.PERMISSION_DENIED)
-            {
-                Toast.makeText(this@MainActivity,"Can't Proceed Without your permission",Toast.LENGTH_SHORT).show()
+        } else if (requestCode == 601) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(this@MainActivity, "Can't Proceed Without your permission", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -193,6 +198,75 @@ class MainActivity : AppCompatActivity() {
 
         val nameRef = fDatabase.child("Users").child(auth.currentUser!!.uid)
         val headerView = navView.getHeaderView(0)
+        headerView.navImage.setOnClickListener {
+            var userInfo:UserInfo?=null
+            val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+            dpView = layoutInflater.inflate(R.layout.camera_view, null)
+            dpView.alertMessage.visibility = View.GONE
+            dpView.alertTitle.visibility = View.GONE
+            alertDialog.setMessage("Update Profile Photo")
+            alertDialog.setView(dpView)
+            val uid = auth.currentUser!!.uid
+            val databaseReference = fDatabase.child("Users").child(uid)
+            databaseReference.addChildEventListener(object : ChildEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+                }
+
+                override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                    userInfo = p0.getValue(UserInfo::class.java)
+                    Picasso.get().load(userInfo!!.dpUrl).placeholder(R.drawable.load_image).fit().centerInside().into(dpView.alertImage)
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+
+                }
+            })
+            dpView.alertImage.setOnClickListener {
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.setType("image/*")
+                startActivityForResult(intent,DpChange)
+            }
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Update Profile", object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    val progressDialog = ProgressDialog(this@MainActivity)
+                    progressDialog.create()
+                    progressDialog.setCancelable(false)
+                    progressDialog.setMessage("Changing Profile Photo...")
+                    progressDialog.show()
+                    val databaseStorage=fStorage.child(uid).storage.getReferenceFromUrl(userInfo!!.dpUrl)
+                    databaseStorage.delete().addOnSuccessListener {
+                        databaseReference.ref.removeValue()
+                        val filepath = fStorage.child(uid).child(imageUri.lastPathSegment + System.currentTimeMillis().toString())
+                        filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
+                            override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
+                                var downloadUrl: Uri? = null
+                                p0!!.storage.downloadUrl.addOnSuccessListener(object : OnSuccessListener<Uri> {
+                                    override fun onSuccess(p0: Uri?) {
+                                        downloadUrl = p0!!
+                                        val childData = fDatabase.child("Users").child(uid).push()
+                                        userInfo!!.dpUrl=downloadUrl.toString()
+                                        childData.setValue(userInfo!!)
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@MainActivity,"Profile Photo Updated Successfully",Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    alertDialog.dismiss()
+                }
+            })
+            alertDialog.show()
+        }
         nameRef.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
@@ -228,6 +302,31 @@ class MainActivity : AppCompatActivity() {
                     auth.signOut()
                     startActivity(Intent(this@MainActivity, Authentication::class.java))
                     finish()
+                } else if (item.itemId == R.id.acChangePassword) {
+                    val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+                    val mView = layoutInflater.inflate(R.layout.alert_dialog_layout, null)
+                    mView.etFileName.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    mView.etFileName.hint = "Enter New Password"
+                    alertDialog.setView(mView)
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Change Password", object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            val progressDialog = ProgressDialog(this@MainActivity)
+                            progressDialog.create()
+                            progressDialog.setCancelable(false)
+                            progressDialog.setMessage("Changing Password")
+                            progressDialog.show()
+                            val password = mView.etFileName.text.toString()
+                            if (password.isEmpty()) {
+                                Toast.makeText(this@MainActivity, "Empty Password Field", Toast.LENGTH_SHORT).show()
+                            } else {
+                                auth.currentUser!!.updatePassword(password).addOnCompleteListener {
+                                    Toast.makeText(this@MainActivity, "Password Changed Successfully", Toast.LENGTH_SHORT).show()
+                                    progressDialog.dismiss()
+                                }
+                            }
+                        }
+                    })
+                    alertDialog.show()
                 }
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
@@ -279,19 +378,17 @@ class MainActivity : AppCompatActivity() {
             alertDialog.dismiss()
         }
         mView.camera_options.setOnClickListener {
-            val permission=ContextCompat.checkSelfPermission(view.context,Manifest.permission.CAMERA)
-            if(permission==PackageManager.PERMISSION_GRANTED)
-            {
-                values.put(MediaStore.Images.Media.TITLE,"New Picture")
-                values.put(MediaStore.Images.Media.DESCRIPTION,"From Camera")
-                imageUri=contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
-                val intent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri)
-                startActivityForResult(intent,Camera_Request)
+            val permission = ContextCompat.checkSelfPermission(view.context, Manifest.permission.CAMERA)
+            if (permission == PackageManager.PERMISSION_GRANTED) {
+                values.put(MediaStore.Images.Media.TITLE, "New Picture")
+                values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
+                imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                startActivityForResult(intent, Camera_Request)
                 alertDialog.dismiss()
-            }else
-            {
-                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA),601)
+            } else {
+                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA), 601)
             }
         }
         alertDialog.setView(mView)
@@ -335,14 +432,15 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == Gallery_Request && resultCode == Activity.RESULT_OK) {
             imageUri = data!!.data
             mView.alertImage.setImageURI(imageUri)
-        }
-        else if (requestCode == SignUp_Code && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == SignUp_Code && resultCode == Activity.RESULT_OK) {
             signUpImageUri = data!!.data
             alertView.sign_up_image.setImageURI(signUpImageUri)
-        }
-        else if(requestCode==Camera_Request&&resultCode==Activity.RESULT_OK)
-        {
+        } else if (requestCode == Camera_Request && resultCode == Activity.RESULT_OK) {
             mView.alertImage.setImageURI(imageUri)
+        } else if (requestCode == DpChange && resultCode == Activity.RESULT_OK) {
+            imageUri = data!!.data
+            dpView.alertImage.setImageURI(imageUri)
+
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

@@ -9,9 +9,9 @@
                 <item
                     android:id="@+id/acChangePassword"
                     android:title="@string/change_password" />
-                <item
-                    android:id="@+id/acDeleteAccount"
-                    android:title="@string/delete_account" />
+                <!--<item-->
+                    <!--android:id="@+id/acDeleteAccount"-->
+                    <!--android:title="@string/delete_account" />-->
                 <item
                     android:id="@+id/acLogout"
                     android:title="@string/logout" />
@@ -19,14 +19,14 @@
         </menu>
     </item>
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/navTrash"
-            android:icon="@drawable/bin"
-            android:title="@string/bin" />
-        <item
-            android:id="@+id/navSettings"
-            android:icon="@drawable/setting"
-            android:title="@string/settings" />
+        <!--<item-->
+            <!--android:id="@+id/navTrash"-->
+            <!--android:icon="@drawable/bin"-->
+            <!--android:title="@string/bin" />-->
+        <!--<item-->
+            <!--android:id="@+id/navSettings"-->
+            <!--android:icon="@drawable/setting"-->
+            <!--android:title="@string/settings" />-->
         <item
             android:id="@+id/navAbout"
             android:icon="@drawable/help"
