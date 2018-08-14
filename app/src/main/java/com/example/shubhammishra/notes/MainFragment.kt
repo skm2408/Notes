@@ -56,10 +56,10 @@ class MainFragment : Fragment() {
             }
         })
         view.btnSignup.setOnClickListener({
-            myContext.supportFragmentManager.beginTransaction().replace(R.id.mainFrame,SignUpFragment()).commit()
+            myContext.supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainFrame,SignUpFragment()).commit()
         })
         view.tvForgotPassword.setOnClickListener({
-            myContext.supportFragmentManager.beginTransaction().replace(R.id.mainFrame,ForgetPassword()).commit()
+            myContext.supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainFrame,ForgetPassword()).commit()
         })
         return view
     }

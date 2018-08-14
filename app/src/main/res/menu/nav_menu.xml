@@ -29,7 +29,7 @@
             <!--android:title="@string/settings" />-->
         <item
             android:id="@+id/navAbout"
-            android:icon="@drawable/help"
-            android:title="@string/help" />
+            android:icon="@drawable/info"
+            android:title="About us" />
     </group>
 </menu>

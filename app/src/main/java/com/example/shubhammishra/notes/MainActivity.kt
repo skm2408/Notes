@@ -328,6 +328,14 @@ class MainActivity : AppCompatActivity() {
                     })
                     alertDialog.show()
                 }
+                else if(item.itemId==R.id.navAbout)
+                {
+                    val dialog=Dialog(this@MainActivity,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+                    val view2=layoutInflater.inflate(R.layout.about_info,null)
+                    dialog.setContentView(view2)
+                    dialog.create()
+                    dialog.show()
+                }
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }

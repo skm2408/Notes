@@ -20,7 +20,6 @@ class Authentication : AppCompatActivity() {
             finish()
         }
         setContentView(R.layout.activity_authentication)
-        supportFragmentManager.beginTransaction().replace(R.id.mainFrame,MainFragment()).commit()
-
+        supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainFrame,MainFragment()).commit()
     }
 }

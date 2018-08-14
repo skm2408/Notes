@@ -24,7 +24,7 @@ class ForgetPassword : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_forget_password, container, false)
         view.btnBack.setOnClickListener({
-            myContext.supportFragmentManager.beginTransaction().replace(R.id.mainFrame,MainFragment()).commit()
+            myContext.supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right).replace(R.id.mainFrame,MainFragment()).commit()
         })
         view.btnReset.setOnClickListener({
             authenticate(view)
