@@ -76,7 +76,7 @@ class AudioAdapter(var listAudio: ArrayList<Recording>) : RecyclerView.Adapter<A
                 holder.itemView.audioMediaPlayer.setImageResource(R.drawable.media_play)
             }
         }
-        holder.itemView.audioToolTitle.text = listAudio[position].recordName
+        holder.itemView.audioToolTitle.text = listAudio[position].recordName+"              "
         holder.itemView.audioToolMenu.setOnClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView.audioToolMenu)
             popupMenu.inflate(R.menu.record_menu)

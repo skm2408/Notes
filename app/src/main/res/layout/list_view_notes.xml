@@ -1,8 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:id="@+id/empty_view_notes"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/sad_image_notes"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:src="@drawable/sad_emoji" />
+
+        <TextView
+            android:id="@+id/tvMessage_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="320dp"
+            android:fontFamily="serif"
+            android:gravity="center_horizontal"
+            android:hint="Message"
+            android:padding="6dp"
+            android:textSize="18sp" />
+    </RelativeLayout>
+    <!--<include layout="@layout/empty_vie" android:id="@+id/include_Notes"/>-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mainViewNotes"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
