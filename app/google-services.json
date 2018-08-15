@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:375238954883:android:ff440321ecbd6499",
         "android_client_info": {
-          "package_name": "com.example.shubhammishra.firebase"
+          "package_name": "com.myproject.shubhammishra.firebase"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "375238954883-69ibldhksesnqorqr5qffv1l47311er8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.shubhammishra.firebase",
+            "package_name": "com.myproject.shubhammishra.firebase",
             "certificate_hash": "7e976203c7107465d7dfe70ea5bcd2829822c59b"
           }
         },
@@ -54,7 +54,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:375238954883:android:70f5dcc0fb6eef75",
         "android_client_info": {
-          "package_name": "com.example.shubhammishra.notes"
+          "package_name": "com.myproject.shubhammishra.notes"
         }
       },
       "oauth_client": [
@@ -62,7 +62,7 @@
           "client_id": "375238954883-kh7mh6vvr9ja9vp2jb90lh3d77f8gbkt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.shubhammishra.notes",
+            "package_name": "com.myproject.shubhammishra.notes",
             "certificate_hash": "7e976203c7107465d7dfe70ea5bcd2829822c59b"
           }
         },
