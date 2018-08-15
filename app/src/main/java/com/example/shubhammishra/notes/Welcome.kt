@@ -16,8 +16,9 @@ class Welcome : AppCompatActivity() {
         handler.postDelayed(object:Runnable{
             override fun run() {
                 startActivity(Intent(this@Welcome,Authentication::class.java))
+                welcome_progress.visibility=View.GONE
                 finish()
             }
-        },4000)
+        },3000)
     }
 }
