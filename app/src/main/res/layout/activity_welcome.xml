@@ -43,6 +43,7 @@
         android:textSize="14sp"
         android:textColor="@android:color/white"
         android:fontFamily="serif"
+        android:gravity="center"
         android:layout_gravity="bottom"
         android:text="Note:This app needs Internet Connection"
         android:padding="10dp" />
