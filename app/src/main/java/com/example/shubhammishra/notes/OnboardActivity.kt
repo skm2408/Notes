@@ -24,7 +24,7 @@ class OnboardActivity : TutorialActivity() {
                 .setSummary("")
                 .build())
         addFragment(Step.Builder().setTitle("FireBase Database Info")
-                .setContent("Firebase is developed by Google,where your is data saved on online database and keeps it safe.")
+                .setContent("Firebase is developed by Google,where your data is saved safely on online database.")
                 .setBackgroundColor(Color.parseColor("#2c3e50")) // int background color
                 .setDrawable(R.drawable.firebase)
                 .setSummary("Your data is saved online which helps to save your Phone's Memory")

@@ -5,13 +5,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.app.ProgressDialog
-import android.content.ContentValues
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -73,6 +71,13 @@ class MainActivity : AppCompatActivity() {
     val SignUp_Code = 120
     val DpChange = 111
     val values: ContentValues = ContentValues()
+    fun isOnline():Boolean{
+        val connectivityManager=applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo=connectivityManager.activeNetworkInfo
+        if(networkInfo==null||!networkInfo.isConnected||!networkInfo.isAvailable)
+            return false
+        return true
+    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 
         if (requestCode == 100) {
@@ -145,7 +150,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
