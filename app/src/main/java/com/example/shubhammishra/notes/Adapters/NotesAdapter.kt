@@ -65,39 +65,45 @@ class NotesAdapter(var listNotes: ArrayList<Notes>) : RecyclerView.Adapter<Notes
         alertDialog.setCancelable(false)
         mView.etNotes.setText(notes.text, TextView.BufferType.EDITABLE)
         mView.etTitle.setText(notes.title, TextView.BufferType.EDITABLE)
-        mView.saveNote.setOnClickListener {
-            val title=mView.etTitle.text.toString()
-            val text=mView.etNotes.text.toString()
-            if(!title.isEmpty()&&!text.isEmpty()) {
-                val auth = FirebaseAuth.getInstance().currentUser!!.uid
-                val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Notes")
-                val query: Query = dataBaseReference.orderByChild("id").equalTo(notes.id)
-                query.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {
-
-                    }
-
-                    override fun onDataChange(p0: DataSnapshot) {
-                        p0.children.forEach {
-                            if (it.child("id").value!!.equals(notes.id)) {
-                                it.ref.setValue(Notes(notes.id,title,text))
-                            }
-                        }
-                        listNotes[position] =Notes(notes.id,title,text)
-                        notifyDataSetChanged()
-                        alertDialog.dismiss()
-                    }
-                })
-            }
-            else
-            {
-                Toast.makeText(context,"Empty Fields!!",Toast.LENGTH_SHORT).show()
-            }
-        }
+        mView.saveNote.visibility=View.GONE
+//        mView.saveNote.setOnClickListener {
+//
+//        }
         alertDialog.setView(mView)
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 alertDialog.dismiss()
+            }
+        })
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save",object:DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                val title=mView.etTitle.text.toString()
+                val text=mView.etNotes.text.toString()
+                if(!title.isEmpty()&&!text.isEmpty()) {
+                    val auth = FirebaseAuth.getInstance().currentUser!!.uid
+                    val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Notes")
+                    val query: Query = dataBaseReference.orderByChild("id").equalTo(notes.id)
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+
+                        }
+
+                        override fun onDataChange(p0: DataSnapshot) {
+                            p0.children.forEach {
+                                if (it.child("id").value!!.equals(notes.id)) {
+                                    it.ref.setValue(Notes(notes.id,title,text))
+                                }
+                            }
+                            listNotes[position] =Notes(notes.id,title,text)
+                            notifyDataSetChanged()
+                            alertDialog.dismiss()
+                        }
+                    })
+                }
+                else
+                {
+                    Toast.makeText(context,"Empty Fields!!",Toast.LENGTH_SHORT).show()
+                }
             }
         })
         mView.setPadding(5,25,5,20)

@@ -26,15 +26,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.example.shubhammishra.notes.Classes.Snaps
 import com.example.shubhammishra.notes.Classes.UserInfo
 import com.example.shubhammishra.notes.Fragments.*
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -42,6 +41,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.alert_change_password.view.*
 import kotlinx.android.synthetic.main.alert_dialog_layout.view.*
 import kotlinx.android.synthetic.main.alert_options.view.*
 import kotlinx.android.synthetic.main.alert_signup.view.*
@@ -203,75 +203,6 @@ class MainActivity : AppCompatActivity() {
         val nameRef = fDatabase.child("Users").child(auth.currentUser!!.uid)
         nameRef.keepSynced(true)
         val headerView = navView.getHeaderView(0)
-        headerView.navImage.setOnClickListener {
-            var userInfo:UserInfo?=null
-            val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-            dpView = layoutInflater.inflate(R.layout.camera_view, null)
-            dpView.alertMessage.visibility = View.GONE
-            dpView.alertTitle.visibility = View.GONE
-            alertDialog.setMessage("Update Profile Photo")
-            alertDialog.setView(dpView)
-            val uid = auth.currentUser!!.uid
-            val databaseReference = fDatabase.child("Users").child(uid)
-            databaseReference.addChildEventListener(object : ChildEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-
-                }
-
-                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-
-                }
-
-                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
-                }
-
-                override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                    userInfo = p0.getValue(UserInfo::class.java)
-                    Picasso.get().load(userInfo!!.dpUrl).placeholder(R.drawable.load_image).fit().centerInside().into(dpView.alertImage)
-                }
-
-                override fun onChildRemoved(p0: DataSnapshot) {
-
-                }
-            })
-            dpView.alertImage.setOnClickListener {
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.setType("image/*")
-                startActivityForResult(intent,DpChange)
-            }
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Update Profile", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    val progressDialog = ProgressDialog(this@MainActivity)
-                    progressDialog.create()
-                    progressDialog.setCancelable(false)
-                    progressDialog.setMessage("Changing Profile Photo...")
-                    progressDialog.show()
-                    val databaseStorage=fStorage.child(uid).storage.getReferenceFromUrl(userInfo!!.dpUrl)
-                    databaseStorage.delete().addOnSuccessListener {
-                        databaseReference.ref.removeValue()
-                        val filepath = fStorage.child(uid).child(imageUri.lastPathSegment + System.currentTimeMillis().toString())
-                        filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
-                            override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
-                                var downloadUrl: Uri? = null
-                                p0!!.storage.downloadUrl.addOnSuccessListener(object : OnSuccessListener<Uri> {
-                                    override fun onSuccess(p0: Uri?) {
-                                        downloadUrl = p0!!
-                                        val childData = fDatabase.child("Users").child(uid).push()
-                                        userInfo!!.dpUrl=downloadUrl.toString()
-                                        childData.setValue(userInfo!!)
-                                        progressDialog.dismiss()
-                                        Toast.makeText(this@MainActivity,"Profile Photo Updated Successfully",Toast.LENGTH_SHORT).show()
-                                    }
-                                })
-                            }
-                        })
-                    }
-                    alertDialog.dismiss()
-                }
-            })
-            alertDialog.show()
-        }
         nameRef.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
@@ -309,9 +240,7 @@ class MainActivity : AppCompatActivity() {
                     finish()
                 } else if (item.itemId == R.id.acChangePassword) {
                     val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-                    val mView = layoutInflater.inflate(R.layout.alert_dialog_layout, null)
-                    mView.etFileName.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-                    mView.etFileName.hint = "Enter New Password"
+                    val mView = layoutInflater.inflate(R.layout.alert_change_password, null)
                     alertDialog.setView(mView)
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Change Password", object : DialogInterface.OnClickListener {
                         override fun onClick(dialog: DialogInterface?, which: Int) {
@@ -319,14 +248,22 @@ class MainActivity : AppCompatActivity() {
                             progressDialog.create()
                             progressDialog.setCancelable(false)
                             progressDialog.setMessage("Changing Password")
-                            progressDialog.show()
-                            val password = mView.etFileName.text.toString()
-                            if (password.isEmpty()) {
+                            val old_password = mView.old_password.text.toString()
+                            val new_password=mView.newPassword.text.toString()
+                            if (old_password.isEmpty()||new_password.isEmpty()) {
                                 Toast.makeText(this@MainActivity, "Empty Password Field", Toast.LENGTH_SHORT).show()
                             } else {
-                                auth.currentUser!!.updatePassword(password).addOnCompleteListener {
-                                    Toast.makeText(this@MainActivity, "Password Changed Successfully", Toast.LENGTH_SHORT).show()
-                                    progressDialog.dismiss()
+                                auth.currentUser!!.reauthenticate(EmailAuthProvider.getCredential(auth.currentUser!!.email.toString(),old_password)).addOnCompleteListener {
+                                    if(it.isSuccessful)
+                                    { progressDialog.show()
+                                        auth.currentUser!!.updatePassword(new_password).addOnCompleteListener {
+                                            Toast.makeText(this@MainActivity, "Password Changed Successfully", Toast.LENGTH_SHORT).show()
+                                            progressDialog.dismiss()
+                                        }
+                                    }else
+                                    {
+                                        Toast.makeText(this@MainActivity, "You have entered wrong old password", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
                         }
@@ -340,6 +277,10 @@ class MainActivity : AppCompatActivity() {
                     dialog.setContentView(view2)
                     dialog.create()
                     dialog.show()
+                }
+                else if(item.itemId==R.id.navSettings)
+                {
+                    changeUserSetting()
                 }
                 drawerLayout.closeDrawer(GravityCompat.START)
                 return true
@@ -380,7 +321,81 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+    private fun changeUserSetting()
+    {
+        var userInfo:UserInfo?=null
+        val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+        dpView = layoutInflater.inflate(R.layout.camera_view, null)
+        dpView.alertMessage.visibility = View.GONE
+        alertDialog.setMessage("Update Profile Photo")
+        alertDialog.setView(dpView)
+        val uid = auth.currentUser!!.uid
+        val databaseReference = fDatabase.child("Users").child(uid)
+        databaseReference.addChildEventListener(object : ChildEventListener {
+            override fun onCancelled(p0: DatabaseError) {
 
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                userInfo = p0.getValue(UserInfo::class.java)
+                Picasso.get().load(userInfo!!.dpUrl).placeholder(R.drawable.load_image).fit().centerInside().into(dpView.alertImage)
+                dpView.alertTitle.setText(userInfo!!.userName,TextView.BufferType.EDITABLE)
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+        dpView.alertImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.setType("image/*")
+            startActivityForResult(intent,DpChange)
+        }
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Update Profile", object : DialogInterface.OnClickListener {
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                if (dpView.alertTitle.text.toString().isEmpty()) {
+                    Toast.makeText(this@MainActivity, "Empty UserName", Toast.LENGTH_SHORT).show()
+                } else {
+                    val progressDialog = ProgressDialog(this@MainActivity)
+                    progressDialog.create()
+                    progressDialog.setCancelable(false)
+                    progressDialog.setMessage("Updating Profile Credentials")
+                    progressDialog.show()
+                    val databaseStorage = fStorage.child(uid).storage.getReferenceFromUrl(userInfo!!.dpUrl)
+                    databaseStorage.delete().addOnSuccessListener {
+                        databaseReference.ref.removeValue()
+                        val filepath = fStorage.child(uid).child(imageUri.lastPathSegment + System.currentTimeMillis().toString())
+                        filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
+                            override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
+                                var downloadUrl: Uri? = null
+                                p0!!.storage.downloadUrl.addOnSuccessListener(object : OnSuccessListener<Uri> {
+                                    override fun onSuccess(p0: Uri?) {
+                                        downloadUrl = p0!!
+                                        val childData = fDatabase.child("Users").child(uid).push()
+                                        userInfo!!.dpUrl = downloadUrl.toString()
+                                        userInfo!!.userName = dpView.alertTitle.text.toString()
+                                        childData.setValue(userInfo!!)
+                                        progressDialog.dismiss()
+                                        Toast.makeText(this@MainActivity, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    alertDialog.dismiss()
+                }
+            }
+        })
+        alertDialog.show()
+    }
     private fun generateOptions(view: View) {
         val alertDialog = AlertDialog.Builder(view.context).create()
         val mView = (view.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.alert_options, null)

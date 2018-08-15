@@ -15,7 +15,6 @@ class Welcome : AppCompatActivity() {
         val handler=Handler()
         handler.postDelayed(object:Runnable{
             override fun run() {
-                welcome_Progress.visibility= View.GONE
                 startActivity(Intent(this@Welcome,Authentication::class.java))
                 finish()
             }

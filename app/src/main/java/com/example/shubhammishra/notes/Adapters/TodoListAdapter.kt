@@ -92,50 +92,33 @@ class TodoListAdapter(var todoList: ArrayList<GetTodoList>) : RecyclerView.Adapt
     }
 
     private fun alertEditTodos(todoArray: ArrayList<GetTodo>, position: Int, context: Context?, id: String) {
-//        val alertDialog=AlertDialog.Builder(context!!).create()
-//        alertDialog.setTitle("Edit Box")
-//        alertDialog.setIcon(R.drawable.menu_edit)
         val lf = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val mView = lf.inflate(R.layout.recycler_view_todos, null)
-        //alertDialog.setView(mView)
+//        val mView = lf.inflate(R.layout.recycler_view_todos, null)
         val adapter = TodoEditAdapter(todoArray)
-        mView.todoListRecyclerView.layoutManager = LinearLayoutManager(context)
-        mView.todoListRecyclerView.adapter = adapter
-        mView.todoToolbar.visibility = View.GONE
-        mView.todoListRecyclerView.setOnTouchListener { v, event ->
-            v.parent.requestDisallowInterceptTouchEvent(false)
-            false
+//        mView.todoListRecyclerView.layoutManager = LinearLayoutManager(context)
+//        mView.todoListRecyclerView.adapter = adapter
+//        mView.todoToolbar.visibility = View.GONE
+//        mView.todoListRecyclerView.setOnTouchListener { v, event ->
+//            v.parent.requestDisallowInterceptTouchEvent(false)
+//            false
+//        }
+        val mView=lf.inflate(R.layout.fragment_todos,null)
+        mView.todoRecyclerView.layoutManager=LinearLayoutManager(context)
+        mView.todoRecyclerView.adapter=adapter
+        mView.btnSave.visibility=View.GONE
+        mView.todoAddButton.setOnClickListener {
+            val text=mView.todoEditText.text.toString()
+            if (!text.isEmpty())
+            {
+                todoArray.add(GetTodo(false,text))
+                adapter.notifyDataSetChanged()
+            }
         }
-//        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save",object:DialogInterface.OnClickListener{
-//            override fun onClick(dialog: DialogInterface?, which: Int) {
-//                val auth = FirebaseAuth.getInstance().currentUser!!.uid
-//                val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Todos")
-//                val query: Query = dataBaseReference.orderByChild("id").equalTo(id)
-//                query.addListenerForSingleValueEvent(object : ValueEventListener {
-//                    override fun onCancelled(p0: DatabaseError) {
-//
-//                    }
-//
-//                    override fun onDataChange(p0: DataSnapshot) {
-//                        p0.children.forEach {
-//                            if (it.child("id").value!!.equals(id)) {
-//                                it.ref.setValue(GetTodoList(id,todoArray))
-//                            }
-//                        }
-//                        todoList[position]=GetTodoList(id,todoArray)
-//                        notifyDataSetChanged()
-//                        alertDialog.dismiss()
-//                    }
-//                })
-//            }
-//        })
-//        alertDialog.show()
         val dialog = Dialog(context,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
         dialog.setContentView(mView)
-        dialog.setTitle("Edit Box")
-        val params=mView.todoListRecyclerView.layoutParams
-        params.height=3000
-        mView.todoListRecyclerView.layoutParams=params
+//        val params=mView.todoListRecyclerView.layoutParams
+//        params.height=3000
+//        mView.todoListRecyclerView.layoutParams=params
         dialog.setOnDismissListener {
             val auth = FirebaseAuth.getInstance().currentUser!!.uid
                 val dataBaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Todos")
