@@ -197,6 +197,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val nameRef = fDatabase.child("Users").child(auth.currentUser!!.uid)
+        nameRef.keepSynced(true)
         val headerView = navView.getHeaderView(0)
         headerView.navImage.setOnClickListener {
             var userInfo:UserInfo?=null

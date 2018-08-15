@@ -24,6 +24,7 @@ class NoteFragment : android.support.v4.app.Fragment() {
         view1.mainViewNotes.adapter = notesAdapter
         val auth = FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Notes")
+        databaseReference.keepSynced(true)
         databaseReference.addValueEventListener(object:ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
 

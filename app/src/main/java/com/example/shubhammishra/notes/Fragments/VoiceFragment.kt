@@ -28,6 +28,7 @@ class VoiceFragment : android.support.v4.app.Fragment() {
         var audioAdapter = AudioAdapter(listAudio)
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference = FirebaseDatabase.getInstance().reference.child(uid).child("Recordings")
+        databaseReference.keepSynced(true)
         view1.mainViewVoice.layoutManager = GridLayoutManager(view1.context, 2)
         view1.mainViewVoice.adapter = audioAdapter
         databaseReference.addValueEventListener(object : ValueEventListener {

@@ -26,6 +26,7 @@ class TodoFragment : android.support.v4.app.Fragment() {
         view1.mainViewTodo.adapter = adapter
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference = FirebaseDatabase.getInstance().reference.child(userId).child("Todos")
+        databaseReference.keepSynced(true)
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 

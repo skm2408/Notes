@@ -26,6 +26,7 @@ class CameraFragment : android.support.v4.app.Fragment() {
         view1.mainViewCamera.adapter = cameraAdapter
         val auth = FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference = FirebaseDatabase.getInstance().reference.child(auth).child("Snaps")
+        databaseReference.keepSynced(true)
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
