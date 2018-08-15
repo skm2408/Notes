@@ -39,6 +39,7 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.alert_change_password.view.*
@@ -52,13 +53,14 @@ import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.navbar_profile.view.*
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     var user: UserInfo? = null
     lateinit var fStorage: StorageReference
     lateinit var fDatabase: DatabaseReference
     lateinit var mView: View
-    lateinit var imageUri: Uri
+    var imageUri: Uri?=null
     lateinit var signUpImageUri: Uri
     val Gallery_Request = 1
     val Camera_Request = 2
@@ -346,7 +348,15 @@ class MainActivity : AppCompatActivity() {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 userInfo = p0.getValue(UserInfo::class.java)
-                Picasso.get().load(userInfo!!.dpUrl).placeholder(R.drawable.load_image).fit().centerInside().into(dpView.alertImage)
+                Picasso.get().load(userInfo!!.dpUrl).placeholder(R.drawable.load_image).fit().centerInside().into(dpView.alertImage,object:Callback{
+                    override fun onSuccess() {
+
+                    }
+
+                    override fun onError(e: Exception?) {
+                        Picasso.get().load(R.drawable.profile_placeholder).into(dpView.alertImage)
+                    }
+                })
                 dpView.alertTitle.setText(userInfo!!.userName,TextView.BufferType.EDITABLE)
             }
 
@@ -364,33 +374,44 @@ class MainActivity : AppCompatActivity() {
                 if (dpView.alertTitle.text.toString().isEmpty()) {
                     Toast.makeText(this@MainActivity, "Empty UserName", Toast.LENGTH_SHORT).show()
                 } else {
-                    val progressDialog = ProgressDialog(this@MainActivity)
-                    progressDialog.create()
-                    progressDialog.setCancelable(false)
-                    progressDialog.setMessage("Updating Profile Credentials")
-                    progressDialog.show()
-                    val databaseStorage = fStorage.child(uid).storage.getReferenceFromUrl(userInfo!!.dpUrl)
-                    databaseStorage.delete().addOnSuccessListener {
-                        databaseReference.ref.removeValue()
-                        val filepath = fStorage.child(uid).child(imageUri.lastPathSegment + System.currentTimeMillis().toString())
-                        filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
-                            override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
-                                var downloadUrl: Uri? = null
-                                p0!!.storage.downloadUrl.addOnSuccessListener(object : OnSuccessListener<Uri> {
-                                    override fun onSuccess(p0: Uri?) {
-                                        downloadUrl = p0!!
-                                        val childData = fDatabase.child("Users").child(uid).push()
-                                        userInfo!!.dpUrl = downloadUrl.toString()
-                                        userInfo!!.userName = dpView.alertTitle.text.toString()
-                                        childData.setValue(userInfo!!)
-                                        progressDialog.dismiss()
-                                        Toast.makeText(this@MainActivity, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
-                                    }
-                                })
-                            }
-                        })
+                    if(imageUri!=null)
+                    {
+                        val progressDialog = ProgressDialog(this@MainActivity)
+                        progressDialog.create()
+                        progressDialog.setCancelable(false)
+                        progressDialog.setMessage("Updating Profile Credentials")
+                        progressDialog.show()
+                        val databaseStorage = fStorage.child(uid).storage.getReferenceFromUrl(userInfo!!.dpUrl)
+                        databaseStorage.delete().addOnSuccessListener {
+                            databaseReference.ref.removeValue()
+                            val filepath = fStorage.child(uid).child(imageUri!!.lastPathSegment + System.currentTimeMillis().toString())
+                            filepath.putFile(imageUri!!).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
+                                override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
+                                    var downloadUrl: Uri? = null
+                                    p0!!.storage.downloadUrl.addOnSuccessListener(object : OnSuccessListener<Uri> {
+                                        override fun onSuccess(p0: Uri?) {
+                                            downloadUrl = p0!!
+                                            val childData = fDatabase.child("Users").child(uid).push()
+                                            userInfo!!.dpUrl = downloadUrl.toString()
+                                            userInfo!!.userName = dpView.alertTitle.text.toString()
+                                            childData.setValue(userInfo!!)
+                                            progressDialog.dismiss()
+                                            Toast.makeText(this@MainActivity, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                        alertDialog.dismiss()
                     }
-                    alertDialog.dismiss()
+                    else
+                    {
+                        val childData = fDatabase.child("Users").child(uid).push()
+                        userInfo!!.userName = dpView.alertTitle.text.toString()
+                        childData.setValue(userInfo!!)
+                        Toast.makeText(this@MainActivity, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }
         })
@@ -435,8 +456,8 @@ class MainActivity : AppCompatActivity() {
             dialog.setCancelable(false)
             dialog.show()
             val currentUser = auth.currentUser!!.uid
-            val filepath = fStorage.child(currentUser).child(imageUri.lastPathSegment + System.currentTimeMillis().toString())
-            filepath.putFile(imageUri).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
+            val filepath = fStorage.child(currentUser).child(imageUri!!.lastPathSegment + System.currentTimeMillis().toString())
+            filepath.putFile(imageUri!!).addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot> {
                 override fun onSuccess(p0: UploadTask.TaskSnapshot?) {
                     var downloadUrl: Uri? = null
                     p0!!.storage.downloadUrl.addOnSuccessListener(object : OnSuccessListener<Uri> {
